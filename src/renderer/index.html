@@ -14,9 +14,21 @@
     <div class="app-shell" id="app-shell">
       <header class="topbar">
         <button class="brand" id="contents-button" type="button" aria-label="Toggle table of contents" title="Toggle contents (Ctrl+Shift+T)">
-          <span class="brand-mark" aria-hidden="true">C</span>
+          <span class="brand-mark" aria-hidden="true"></span>
           <span class="brand-name">Chwezi Markdown Reader</span>
         </button>
+
+        <nav class="history-controls" aria-label="Document navigation">
+          <button class="icon-button compact" id="back-button" type="button" aria-label="Back" title="Back" disabled>
+            <span class="mask-icon icon-arrow-left" aria-hidden="true"></span>
+          </button>
+          <button class="icon-button compact" id="forward-button" type="button" aria-label="Forward" title="Forward" disabled>
+            <span class="mask-icon icon-arrow-right" aria-hidden="true"></span>
+          </button>
+          <button class="icon-button compact" id="recent-button" type="button" aria-label="Recent documents" title="Recent documents">
+            <span class="mask-icon icon-history" aria-hidden="true"></span>
+          </button>
+        </nav>
 
         <div class="document-identity" aria-live="polite">
           <strong id="document-name">No document open</strong>
@@ -28,16 +40,40 @@
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6.5h6l2 2h10v9.5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6.5Zm0 4h18M6 6.5v-2h6l2 2"/></svg>
             <span>Open</span>
           </button>
+          <button class="icon-button" id="open-folder-button" type="button" aria-label="Open Markdown folder" title="Open a Markdown folder">
+            <span class="mask-icon icon-folder-open" aria-hidden="true"></span>
+          </button>
           <button class="toolbar-button" id="copy-button" type="button" title="Copy rendered document (Ctrl+Shift+C)" disabled>
             <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="11" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h2"/></svg>
             <span>Copy</span>
           </button>
           <button class="icon-button" id="print-button" type="button" aria-label="Print document" title="Print (Ctrl+P)" disabled>
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 9V3h10v6M7 18H5a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M7 14h10v7H7z"/></svg>
+            <span class="mask-icon icon-printer" aria-hidden="true"></span>
           </button>
           <button class="icon-button" id="theme-button" type="button" aria-label="Switch to dark mode" title="Toggle light/dark mode (Ctrl+Shift+L)">
-            <svg class="sun-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/></svg>
-            <svg class="moon-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 15.3A8.5 8.5 0 0 1 8.7 4a8.5 8.5 0 1 0 11.3 11.3Z"/></svg>
+            <span class="mask-icon icon-sun" aria-hidden="true"></span>
+            <span class="mask-icon icon-moon" aria-hidden="true"></span>
+          </button>
+          <button class="icon-button" id="appearance-button" type="button" aria-label="Reading appearance" title="Reading appearance">
+            <span class="mask-icon icon-settings" aria-hidden="true"></span>
+          </button>
+          <details class="toolbar-menu" id="document-actions">
+            <summary class="icon-button" aria-label="More document actions" title="More document actions">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></svg>
+            </summary>
+            <div class="toolbar-menu-panel" aria-label="More document actions">
+              <button class="menu-icon-button" id="reveal-button" type="button" disabled><span class="mask-icon icon-folder-open" aria-hidden="true"></span>Reveal in folder</button>
+              <button class="menu-icon-button" id="editor-button" type="button" disabled><span class="mask-icon icon-external-link" aria-hidden="true"></span>Open in external editor</button>
+              <button class="menu-icon-button" id="export-html-button" type="button" disabled><span class="asset-icon icon-file-html" aria-hidden="true"></span>Export standalone HTML...</button>
+              <button class="menu-icon-button" id="export-pdf-button" type="button" disabled><span class="asset-icon icon-file-pdf" aria-hidden="true"></span>Export PDF...</button>
+            </div>
+          </details>
+          <button class="icon-button" id="fullscreen-button" type="button" aria-label="Enter full screen" title="Enter full screen">
+            <span class="asset-icon icon-fullscreen" aria-hidden="true"></span>
+            <span class="mask-icon icon-exit-fullscreen" aria-hidden="true"></span>
+          </button>
+          <button class="icon-button" id="about-button" type="button" aria-label="About Chwezi Markdown Reader" title="About Chwezi Markdown Reader">
+            <span class="asset-icon icon-info" aria-hidden="true"></span>
           </button>
         </div>
       </header>
@@ -46,19 +82,65 @@
         <label for="search-input">Find</label>
         <input id="search-input" type="search" autocomplete="off" placeholder="Search this document" />
         <span id="search-count" aria-live="polite">0 results</span>
-        <button id="search-previous" class="icon-button compact" type="button" aria-label="Previous result">↑</button>
-        <button id="search-next" class="icon-button compact" type="button" aria-label="Next result">↓</button>
-        <button id="search-close" class="icon-button compact" type="button" aria-label="Close search">×</button>
+        <label class="search-option"><input id="search-match-case" type="checkbox" /><span class="mask-icon icon-case-sensitive" aria-hidden="true"></span> Match case</label>
+        <label class="search-option"><input id="search-whole-word" type="checkbox" /><span class="mask-icon icon-whole-word" aria-hidden="true"></span> Whole word</label>
+        <button id="search-previous" class="icon-button compact" type="button" aria-label="Previous result" title="Previous result"><span class="mask-icon icon-chevron-up" aria-hidden="true"></span></button>
+        <button id="search-next" class="icon-button compact" type="button" aria-label="Next result" title="Next result"><span class="mask-icon icon-chevron-down" aria-hidden="true"></span></button>
+        <button id="search-close" class="icon-button compact" type="button" aria-label="Close search" title="Close search"><span class="mask-icon icon-x-circle" aria-hidden="true"></span></button>
       </div>
 
+      <section class="remote-image-banner" id="remote-image-banner" aria-live="polite" hidden>
+        <span class="privacy-mark" aria-hidden="true"><span class="asset-icon icon-check"></span></span>
+        <div>
+          <strong id="remote-image-title">Remote images blocked</strong>
+          <span id="remote-image-message">No network request was made for these images.</span>
+        </div>
+        <div class="remote-image-actions">
+          <button class="text-button" id="remote-images-once" type="button">Load for this document</button>
+          <button class="text-button" id="remote-images-always" type="button">Always allow</button>
+          <button class="text-button" id="remote-images-block" type="button" hidden>Block remote images</button>
+        </div>
+      </section>
+
       <main class="workspace">
-        <aside class="contents-panel" id="contents-panel" aria-label="Table of contents">
-          <div class="contents-heading">On this page</div>
-          <nav id="contents-list"></nav>
-          <div class="contents-empty" id="contents-empty">Headings will appear here.</div>
+        <aside class="contents-panel" id="contents-panel" aria-label="Document navigation">
+          <div class="navigator-tabs" role="tablist" aria-label="Navigation view">
+            <button id="outline-tab" type="button" role="tab" aria-selected="true" aria-controls="outline-panel"><span class="mask-icon icon-list-tree" aria-hidden="true"></span>Outline</button>
+            <button id="library-tab" type="button" role="tab" aria-selected="false" aria-controls="library-panel" tabindex="-1"><span class="mask-icon icon-folder-open" aria-hidden="true"></span>Folder</button>
+          </div>
+          <section id="outline-panel" role="tabpanel" aria-labelledby="outline-tab">
+            <div class="contents-heading">On this page</div>
+            <label class="contents-filter-label" for="contents-filter">Filter outline</label>
+            <input class="contents-filter" id="contents-filter" type="search" autocomplete="off" placeholder="Filter headings" />
+            <nav id="contents-list"></nav>
+            <div class="contents-empty" id="contents-empty">Headings will appear here.</div>
+          </section>
+          <section class="library-panel" id="library-panel" role="tabpanel" aria-labelledby="library-tab" hidden>
+            <div class="library-header">
+              <div><span>Markdown folder</span><strong id="library-name">No folder open</strong></div>
+              <div class="library-header-actions">
+                <button class="text-button" id="library-choose" type="button">Choose</button>
+                <button class="library-icon-button" id="library-refresh" type="button" aria-label="Refresh folder" title="Refresh folder" disabled><span class="mask-icon icon-refresh" aria-hidden="true"></span></button>
+                <button class="library-icon-button" id="library-close" type="button" aria-label="Close folder" title="Close folder" disabled><span class="mask-icon icon-x-circle" aria-hidden="true"></span></button>
+              </div>
+            </div>
+            <form class="library-search" id="library-search" role="search">
+              <label class="sr-only" for="library-search-input">Search this Markdown folder</label>
+              <span class="mask-icon icon-list-search library-search-mark" aria-hidden="true"></span>
+              <input id="library-search-input" type="search" autocomplete="off" maxlength="256" placeholder="Search folder" disabled />
+              <button id="library-search-cancel" type="button" hidden>Cancel</button>
+              <div class="library-search-options">
+                <label><input id="library-match-case" type="checkbox" /><span class="mask-icon icon-case-sensitive" aria-hidden="true"></span> Match case</label>
+                <label><input id="library-whole-word" type="checkbox" /><span class="mask-icon icon-whole-word" aria-hidden="true"></span> Whole word</label>
+              </div>
+            </form>
+            <p class="library-status" id="library-status" aria-live="polite">Choose a folder to browse its Markdown files.</p>
+            <nav class="library-files" id="library-files" aria-label="Markdown files"></nav>
+            <div class="library-results" id="library-results" aria-label="Folder search results" hidden></div>
+          </section>
         </aside>
 
-        <section class="reader" id="reader" aria-label="Markdown document">
+        <section class="reader" id="reader" aria-label="Markdown document" tabindex="-1">
           <div class="empty-state" id="empty-state">
             <div class="empty-document" aria-hidden="true">
               <span>#</span><i></i><i></i><i class="short"></i>
@@ -82,6 +164,9 @@
           </div>
 
           <article class="markdown-body" id="markdown-body" hidden></article>
+          <button class="back-to-top" id="back-to-top" type="button" aria-label="Back to top" title="Back to top" hidden>
+            <span class="mask-icon icon-chevron-up" aria-hidden="true"></span>
+          </button>
         </section>
       </main>
 
@@ -96,6 +181,68 @@
       </div>
       <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
     </div>
+
+    <dialog class="about-dialog" id="about-dialog" aria-labelledby="about-title" aria-describedby="about-description">
+      <button class="about-close" id="about-close" type="button" aria-label="Close About dialog">
+        <span class="asset-icon icon-close" aria-hidden="true"></span>
+      </button>
+      <div class="about-hero">
+        <span class="about-logo" aria-hidden="true"></span>
+        <div>
+          <p class="about-eyebrow">Local. Private. Dependable.</p>
+          <h1 id="about-title">Chwezi Markdown Reader</h1>
+          <p class="about-version" id="about-version">Version 1.0.0</p>
+        </div>
+      </div>
+      <p id="about-description" class="about-description">A focused desktop reader for local Markdown files, with calm reading presentation and formatting-preserving copy.</p>
+      <div class="about-promise">
+        <span class="asset-icon icon-check" aria-hidden="true"></span>
+        <span>Documents are read locally. Remote images stay blocked until you choose to load them.</span>
+      </div>
+      <section class="about-section" aria-labelledby="developer-heading">
+        <h2 id="developer-heading">Developed by Peter Bamuhigire</h2>
+        <dl class="contact-list">
+          <div>
+            <dt><span class="asset-icon icon-email" aria-hidden="true"></span><span class="sr-only">Email</span></dt>
+            <dd><button class="contact-action" id="about-email" type="button">peter@techguypeter.com</button></dd>
+            <dd><button class="copy-contact" type="button" data-copy="peter@techguypeter.com" aria-label="Copy email address"><span class="asset-icon icon-copy" aria-hidden="true"></span></button></dd>
+          </div>
+          <div>
+            <dt><span class="asset-icon icon-phone" aria-hidden="true"></span><span class="sr-only">Phone</span></dt>
+            <dd>+256 784 464178</dd>
+            <dd><button class="copy-contact" type="button" data-copy="+256784464178" aria-label="Copy phone number"><span class="asset-icon icon-copy" aria-hidden="true"></span></button></dd>
+          </div>
+          <div>
+            <dt><span class="asset-icon icon-location" aria-hidden="true"></span><span class="sr-only">Location</span></dt>
+            <dd>Kampala, Uganda</dd>
+          </div>
+        </dl>
+      </section>
+      <footer class="about-footer">
+        <span>MIT licensed</span>
+        <button class="primary-button" id="about-done" type="button">Done</button>
+      </footer>
+    </dialog>
+
+    <dialog class="utility-dialog recent-dialog" id="recent-dialog" aria-labelledby="recent-title">
+      <header><div><p class="dialog-eyebrow">Library</p><h1 id="recent-title">Recent documents</h1></div><button class="dialog-close" id="recent-close" type="button" aria-label="Close recent documents">&#215;</button></header>
+      <div class="recent-list" id="recent-list"></div>
+      <p class="dialog-empty" id="recent-empty">Documents you open will appear here.</p>
+      <label class="setting-check"><input id="reopen-last" type="checkbox" /> Reopen the last document when the app starts</label>
+      <footer><button class="text-button danger-text" id="recent-clear" type="button">Clear recent documents</button><button class="primary-button" id="recent-done" type="button">Done</button></footer>
+    </dialog>
+
+    <dialog class="utility-dialog appearance-dialog" id="appearance-dialog" aria-labelledby="appearance-title">
+      <header><div><p class="dialog-eyebrow">Reading</p><h1 id="appearance-title">Appearance</h1></div><button class="dialog-close" id="appearance-close" type="button" aria-label="Close reading appearance">&#215;</button></header>
+      <form class="appearance-form" id="appearance-form" method="dialog">
+        <label>Reader font<select id="reader-font"><option value="serif">Book serif</option><option value="sans">Clean sans serif</option><option value="system">System font</option></select></label>
+        <label>Font size <output id="font-size-value">17 px</output><input id="font-size" type="range" min="14" max="24" step="1" /></label>
+        <label>Line height <output id="line-height-value">1.72</output><input id="line-height" type="range" min="1.4" max="2" step="0.04" /></label>
+        <label>Reading width <output id="reading-width-value">820 px</output><input id="reading-width" type="range" min="620" max="1080" step="20" /></label>
+        <label>Paragraph spacing <output id="paragraph-spacing-value">1.12</output><input id="paragraph-spacing" type="range" min="0.7" max="1.8" step="0.05" /></label>
+      </form>
+      <footer><button class="text-button" id="appearance-reset" type="button">Reset defaults</button><button class="primary-button" id="appearance-done" type="button">Done</button></footer>
+    </dialog>
     <script type="module" src="/app.ts"></script>
   </body>
 </html>

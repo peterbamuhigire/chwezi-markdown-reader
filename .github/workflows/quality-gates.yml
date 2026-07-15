@@ -1,0 +1,55 @@
+name: Quality gates
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+concurrency:
+  group: quality-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  desktop:
+    name: ${{ matrix.name }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Windows x64
+            os: windows-latest
+          - name: macOS native
+            os: macos-latest
+    runs-on: ${{ matrix.os }}
+    env:
+      CSC_IDENTITY_AUTO_DISCOVERY: "false"
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+      - name: Set up Node.js
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: 24
+          cache: npm
+      - name: Install locked dependencies
+        run: npm ci
+      - name: Verify generated application and file-type icons
+        run: npm run icons:check
+      - name: Audit production dependencies
+        run: npm audit --audit-level=high
+      - name: Type-check main, preload, and renderer
+        run: npm run typecheck
+      - name: Run unit and contract tests
+        run: npm test
+      - name: Build application
+        run: npm run build
+      - name: Create unpacked smoke package
+        run: npm run package:smoke
+      - name: Verify package structure
+        run: npm run test:package-static
+      - name: Exercise packaged open, render, and copy flow
+        run: npm run test:smoke:packaged

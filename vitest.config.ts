@@ -4,7 +4,7 @@ import { resolve } from "node:path";
 export default defineConfig({
   test: {
     environment: "jsdom",
-    include: ["src/**/*.test.ts"],
+    include: ["src/**/*.test.ts", "tests/**/*.test.ts"],
   },
   resolve: {
     alias: {

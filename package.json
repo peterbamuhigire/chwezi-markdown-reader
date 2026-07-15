@@ -9,18 +9,25 @@
   "scripts": {
     "clean": "node scripts/clean.cjs",
     "typecheck": "tsc -p tsconfig.main.json --noEmit && tsc -p tsconfig.renderer.json --noEmit",
-    "build:main": "tsc -p tsconfig.main.json",
+    "build:main": "tsc -p tsconfig.main.json && vite build --config vite.preload.config.ts",
     "build:renderer": "vite build",
     "build": "npm run clean && npm run typecheck && npm run build:main && npm run build:renderer",
     "start": "npm run build && electron .",
     "test": "vitest run",
     "test:watch": "vitest",
+    "icons:generate": "node scripts/generate-icons.cjs",
+    "icons:check": "node scripts/generate-icons.cjs --check",
+    "package:smoke": "node scripts/package-smoke.cjs",
+    "test:package-static": "node scripts/verify-package.cjs --dir release/smoke",
+    "test:smoke:packaged": "node scripts/smoke-electron.cjs --packaged release/smoke",
+    "checksums": "node scripts/write-checksums.cjs",
     "dist": "npm run build && electron-builder",
     "dist:win": "npm run build && electron-builder --win nsis portable",
     "dist:mac": "npm run build && electron-builder --mac"
   },
   "dependencies": {
     "dompurify": "3.4.12",
+    "highlight.js": "11.11.1",
     "marked": "18.0.6",
     "zod": "4.3.6"
   },
@@ -37,6 +44,16 @@
     "appId": "com.chwezi.markdownreader",
     "productName": "Chwezi Markdown Reader",
     "asar": true,
+    "electronFuses": {
+      "runAsNode": false,
+      "enableCookieEncryption": true,
+      "enableNodeOptionsEnvironmentVariable": false,
+      "enableNodeCliInspectArguments": false,
+      "enableEmbeddedAsarIntegrityValidation": true,
+      "onlyLoadAppFromAsar": true,
+      "loadBrowserProcessSpecificV8Snapshot": false,
+      "grantFileProtocolExtraPrivileges": true
+    },
     "directories": {
       "output": "release",
       "buildResources": "build-resources"
@@ -44,17 +61,19 @@
     "files": [
       "dist/**/*",
       "build-resources/icon.png",
-      "package.json"
+      "build-resources/app-icon.ico",
+      "package.json",
+      "!node_modules/**/*.map"
     ],
     "win": {
-      "icon": "build-resources/icon.png",
+      "icon": "build-resources/app-icon.ico",
       "target": [
         "nsis",
         "portable"
       ]
     },
     "mac": {
-      "icon": "build-resources/icon.png",
+      "icon": "build-resources/app-icon.icns",
       "category": "public.app-category.productivity",
       "artifactName": "Chwezi-Markdown-Reader-${version}-macOS-${arch}.${ext}",
       "hardenedRuntime": true,
@@ -62,11 +81,17 @@
       "target": [
         {
           "target": "dmg",
-          "arch": ["x64", "arm64"]
+          "arch": [
+            "x64",
+            "arm64"
+          ]
         },
         {
           "target": "zip",
-          "arch": ["x64", "arm64"]
+          "arch": [
+            "x64",
+            "arm64"
+          ]
         }
       ]
     },
@@ -87,11 +112,16 @@
     },
     "fileAssociations": [
       {
-        "ext": ["md", "markdown", "mdown", "mkd"],
+        "ext": [
+          "md",
+          "markdown",
+          "mdown",
+          "mkd"
+        ],
         "name": "Markdown document",
         "description": "Markdown document",
         "role": "Viewer",
-        "icon": "build-resources/icon.png"
+        "icon": "build-resources/file-icon"
       }
     ]
   }

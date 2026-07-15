@@ -8,6 +8,6 @@ export default defineConfig({
     outDir: resolve(__dirname, "dist/renderer"),
     emptyOutDir: true,
     cssMinify: false,
-    sourcemap: true,
+    sourcemap: false,
   },
 });

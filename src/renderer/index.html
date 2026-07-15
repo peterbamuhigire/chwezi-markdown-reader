@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: file: https: http:; font-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'self' file:; form-action 'none'"
+    />
+    <base id="document-base" href="./" />
+    <title>Chwezi Markdown Reader</title>
+  </head>
+  <body>
+    <div class="app-shell" id="app-shell">
+      <header class="topbar">
+        <button class="brand" id="contents-button" type="button" aria-label="Toggle table of contents" title="Toggle contents (Ctrl+Shift+T)">
+          <span class="brand-mark" aria-hidden="true">C</span>
+          <span class="brand-name">Chwezi Markdown Reader</span>
+        </button>
+
+        <div class="document-identity" aria-live="polite">
+          <strong id="document-name">No document open</strong>
+          <span id="document-meta">Markdown reader</span>
+        </div>
+
+        <div class="toolbar" aria-label="Document actions">
+          <button class="toolbar-button" id="open-button" type="button" title="Open Markdown (Ctrl+O)">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6.5h6l2 2h10v9.5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6.5Zm0 4h18M6 6.5v-2h6l2 2"/></svg>
+            <span>Open</span>
+          </button>
+          <button class="toolbar-button" id="copy-button" type="button" title="Copy rendered document (Ctrl+Shift+C)" disabled>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="11" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h2"/></svg>
+            <span>Copy</span>
+          </button>
+          <button class="icon-button" id="print-button" type="button" aria-label="Print document" title="Print (Ctrl+P)" disabled>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 9V3h10v6M7 18H5a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M7 14h10v7H7z"/></svg>
+          </button>
+          <button class="icon-button" id="theme-button" type="button" aria-label="Switch to dark mode" title="Toggle light/dark mode (Ctrl+Shift+L)">
+            <svg class="sun-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/></svg>
+            <svg class="moon-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 15.3A8.5 8.5 0 0 1 8.7 4a8.5 8.5 0 1 0 11.3 11.3Z"/></svg>
+          </button>
+        </div>
+      </header>
+
+      <div class="search-bar" id="search-bar" hidden>
+        <label for="search-input">Find</label>
+        <input id="search-input" type="search" autocomplete="off" placeholder="Search this document" />
+        <span id="search-count" aria-live="polite">0 results</span>
+        <button id="search-previous" class="icon-button compact" type="button" aria-label="Previous result">↑</button>
+        <button id="search-next" class="icon-button compact" type="button" aria-label="Next result">↓</button>
+        <button id="search-close" class="icon-button compact" type="button" aria-label="Close search">×</button>
+      </div>
+
+      <main class="workspace">
+        <aside class="contents-panel" id="contents-panel" aria-label="Table of contents">
+          <div class="contents-heading">On this page</div>
+          <nav id="contents-list"></nav>
+          <div class="contents-empty" id="contents-empty">Headings will appear here.</div>
+        </aside>
+
+        <section class="reader" id="reader" aria-label="Markdown document">
+          <div class="empty-state" id="empty-state">
+            <div class="empty-document" aria-hidden="true">
+              <span>#</span><i></i><i></i><i class="short"></i>
+            </div>
+            <h1>Read Markdown without the clutter.</h1>
+            <p>Open a file or drop one anywhere in this window. Your document stays on this computer.</p>
+            <button class="primary-button" id="empty-open-button" type="button">Choose a Markdown file</button>
+            <span class="drop-hint">.md · .markdown · .mdown · .mkd</span>
+          </div>
+
+          <div class="loading-state" id="loading-state" hidden aria-live="polite">
+            <div class="loading-line wide"></div><div class="loading-line"></div><div class="loading-line short"></div>
+            <span>Opening document…</span>
+          </div>
+
+          <div class="error-state" id="error-state" hidden role="alert">
+            <div class="error-mark" aria-hidden="true">!</div>
+            <h1>That file could not be opened.</h1>
+            <p id="error-message"></p>
+            <button class="primary-button" id="error-open-button" type="button">Choose another file</button>
+          </div>
+
+          <article class="markdown-body" id="markdown-body" hidden></article>
+        </section>
+      </main>
+
+      <footer class="statusbar">
+        <span id="status-message">Ready</span>
+        <div class="reading-progress" aria-hidden="true"><i id="reading-progress"></i></div>
+        <span class="shortcut-hint">Ctrl+O to open</span>
+      </footer>
+
+      <div class="drop-overlay" id="drop-overlay" hidden>
+        <div><strong>Drop to open</strong><span>Release the Markdown file anywhere</span></div>
+      </div>
+      <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+    </div>
+    <script type="module" src="/app.ts"></script>
+  </body>
+</html>

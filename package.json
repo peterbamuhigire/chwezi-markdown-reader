@@ -1,0 +1,98 @@
+{
+  "name": "chwezi-markdown-reader",
+  "version": "1.0.0",
+  "description": "A focused Markdown reader for Windows and macOS with faithful rich-text copy.",
+  "main": "dist/main/main.js",
+  "author": "Peter Bamuhigire",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "clean": "node scripts/clean.cjs",
+    "typecheck": "tsc -p tsconfig.main.json --noEmit && tsc -p tsconfig.renderer.json --noEmit",
+    "build:main": "tsc -p tsconfig.main.json",
+    "build:renderer": "vite build",
+    "build": "npm run clean && npm run typecheck && npm run build:main && npm run build:renderer",
+    "start": "npm run build && electron .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "dist": "npm run build && electron-builder",
+    "dist:win": "npm run build && electron-builder --win nsis portable",
+    "dist:mac": "npm run build && electron-builder --mac"
+  },
+  "dependencies": {
+    "dompurify": "3.4.12",
+    "marked": "18.0.6",
+    "zod": "4.3.6"
+  },
+  "devDependencies": {
+    "@types/node": "26.0.0",
+    "electron": "43.1.1",
+    "electron-builder": "26.15.3",
+    "jsdom": "26.1.0",
+    "typescript": "7.0.2",
+    "vite": "8.1.4",
+    "vitest": "4.1.0"
+  },
+  "build": {
+    "appId": "com.chwezi.markdownreader",
+    "productName": "Chwezi Markdown Reader",
+    "asar": true,
+    "directories": {
+      "output": "release",
+      "buildResources": "build-resources"
+    },
+    "files": [
+      "dist/**/*",
+      "build-resources/icon.png",
+      "package.json"
+    ],
+    "win": {
+      "icon": "build-resources/icon.png",
+      "target": [
+        "nsis",
+        "portable"
+      ]
+    },
+    "mac": {
+      "icon": "build-resources/icon.png",
+      "category": "public.app-category.productivity",
+      "artifactName": "Chwezi-Markdown-Reader-${version}-macOS-${arch}.${ext}",
+      "hardenedRuntime": true,
+      "darkModeSupport": true,
+      "target": [
+        {
+          "target": "dmg",
+          "arch": ["x64", "arm64"]
+        },
+        {
+          "target": "zip",
+          "arch": ["x64", "arm64"]
+        }
+      ]
+    },
+    "dmg": {
+      "title": "Chwezi Markdown Reader ${version}",
+      "backgroundColor": "#EEE8DC"
+    },
+    "nsis": {
+      "artifactName": "Chwezi-Markdown-Reader-Setup-${version}-${arch}.${ext}",
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Chwezi Markdown Reader"
+    },
+    "portable": {
+      "artifactName": "Chwezi-Markdown-Reader-Portable-${version}-${arch}.${ext}"
+    },
+    "fileAssociations": [
+      {
+        "ext": ["md", "markdown", "mdown", "mkd"],
+        "name": "Markdown document",
+        "description": "Markdown document",
+        "role": "Viewer",
+        "icon": "build-resources/icon.png"
+      }
+    ]
+  }
+}

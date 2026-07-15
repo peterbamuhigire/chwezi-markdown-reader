@@ -1,53 +1,48 @@
 # Chwezi Markdown Reader
 
-Chwezi Markdown Reader is a focused Windows desktop reader for local Markdown files. It renders GitHub-flavoured Markdown, watches the open file for changes, and copies rendered content as rich HTML so headings, tables, lists, links, and code retain their formatting when pasted into compatible editors.
+Chwezi Markdown Reader is a focused desktop reader for local Markdown files on Windows and macOS. It renders GitHub-flavoured Markdown, watches the open file for changes, and copies rendered content as rich HTML so formatting survives when pasted into compatible rich-text editors.
 
-## Features
+## What it does
 
-- Open Markdown from the toolbar, Windows Explorer, or drag-and-drop.
-- Read in light or dark mode with an automatically generated table of contents.
-- Copy a selection with `Ctrl+C`, or copy the complete rendered document with `Ctrl+Shift+C`.
-- Search with `Ctrl+F`, print with `Ctrl+P`, and track reading progress.
-- Refresh automatically when the open file changes on disk.
-- Display local relative images referenced by the document.
-- Sanitize raw HTML before rendering it.
-- Register `.md`, `.markdown`, `.mdown`, and `.mkd` through the Windows installer.
+- Opens `.md`, `.markdown`, `.mdown`, and `.mkd` files from the toolbar, drag-and-drop, Windows Explorer, or macOS Finder.
+- Renders headings, links, task lists, tables, blockquotes, images, and fenced code.
+- Copies a selection with its rendered formatting using `Ctrl+C` on Windows or `Command+C` on macOS.
+- Copies the complete rendered document using `Ctrl+Shift+C`, `Command+Shift+C`, or the **Copy** button.
+- Copies the original Markdown using `Ctrl+Alt+C` on Windows/Linux or `Command+Option+C` on macOS for destinations that do not accept rich HTML.
+- Includes light and dark reading modes, a table of contents, search, print, reading progress, and automatic refresh when the file changes.
+- Includes **Help → About Chwezi Markdown Reader** with the developer’s contact details.
+- Reads files locally. Markdown is sanitized before it is placed in the document.
 
-## Installation
+## Windows installation
 
-Download the latest Windows installer from the repository’s **Releases** page and run:
+1. Run `Chwezi-Markdown-Reader-Setup-1.0.0-x64.exe` from the `release` folder and complete the installer.
+2. Right-click a Markdown file in File Explorer and choose **Open with → Choose another app**.
+3. Select **Chwezi Markdown Reader**, enable **Always use this app**, and confirm.
 
-```text
-Chwezi-Markdown-Reader-Setup-1.0.0-x64.exe
-```
+The installer registers all four supported extensions. Windows controls the final default-app choice, so the portable executable does not change file associations by itself.
 
-To make Chwezi Markdown Reader the default application:
+## macOS installation
 
-1. Right-click a Markdown file in Windows Explorer.
-2. Select **Open with → Choose another app**.
-3. Select **Chwezi Markdown Reader**.
-4. Enable **Always use this app** and confirm.
+The macOS build produces `.dmg` and `.zip` packages for Intel (`x64`) and Apple Silicon (`arm64`). Open the DMG, move **Chwezi Markdown Reader** to Applications, then launch it.
 
-The portable executable runs without installation but does not register file associations.
+To make it the default Markdown reader, select a Markdown file in Finder, choose **File → Get Info**, select **Chwezi Markdown Reader** under **Open with**, and click **Change All**.
 
 ## Keyboard shortcuts
 
 | Action | Shortcut |
 | --- | --- |
-| Open a file | `Ctrl+O` |
-| Find in the document | `Ctrl+F` |
-| Copy selected rendered content | `Ctrl+C` |
-| Copy the complete rendered document | `Ctrl+Shift+C` |
-| Toggle light/dark mode | `Ctrl+Shift+L` |
-| Toggle the table of contents | `Ctrl+Shift+T` |
-| Print | `Ctrl+P` |
+| Open a file | `Ctrl+O` / `Command+O` |
+| Find in the document | `Ctrl+F` / `Command+F` |
+| Copy selection with formatting | `Ctrl+C` / `Command+C` |
+| Copy the full rendered document | `Ctrl+Shift+C` / `Command+Shift+C` |
+| Copy the original Markdown | `Ctrl+Alt+C` / `Command+Option+C` |
+| Toggle light/dark mode | `Ctrl+Shift+L` / `Command+Shift+L` |
+| Toggle table of contents | `Ctrl+Shift+T` / `Command+Shift+T` |
+| Print | `Ctrl+P` / `Command+P` |
 
 ## Build from source
 
-Requirements:
-
-- Windows x64
-- Node.js and npm
+Requires Node.js and npm.
 
 ```powershell
 npm install
@@ -56,34 +51,6 @@ npm run build
 npm run dist
 ```
 
-`npm run dist` writes the NSIS installer and portable executable to `release/`.
+`npm run dist` packages the current operating system. Use `npm run dist:win` for the Windows targets or `npm run dist:mac` on macOS to create Intel and Apple Silicon DMG/ZIP packages. GitHub Actions runs both platform builds from the same source tree. Build outputs are written to `release/`.
 
-## Project structure
-
-```text
-src/main/       Electron main process and secure preload bridge
-src/renderer/   Markdown rendering, clipboard handling, and interface
-build-resources/ Application icon
-tests/          Markdown fixtures and visual evidence
-docs/           Release and audit evidence
-```
-
-## Security and privacy
-
-- Files are read and rendered locally; their Markdown content is not uploaded by Chwezi Markdown Reader.
-- Raw Markdown HTML is sanitized with DOMPurify before insertion into the document.
-- The Electron renderer runs with context isolation, sandboxing, and Node integration disabled.
-- Remote images referenced inside a Markdown document may still be requested from their original servers.
-- Published Windows builds should be Authenticode-signed before broad distribution.
-
-## Developer
-
-Peter Bamuhigire  
-[peter@techguypeter.com](mailto:peter@techguypeter.com)  
-[techguypeter.com](https://techguypeter.com)  
-+256784464178  
-Kampala, Uganda
-
-## License
-
-Chwezi Markdown Reader is available under the [MIT License](LICENSE).
+Unsigned Windows builds trigger publisher warnings. macOS packages distributed outside the App Store need Apple Developer ID signing and notarization for a normal Gatekeeper experience.
